@@ -367,6 +367,13 @@ describe("clipboard image read on Windows", () => {
       // The persistent daemon writes base64 to stdout instead of a temp file.
       expect(src).toMatch(/WindowsClipboardDaemon|startClipboardDaemon/);
     });
+    test("contract: daemon loop exits when stdin closes", async () => {
+      const src = await Bun.file(
+        new URL("../src/core/platform/clipboard.ts", import.meta.url),
+      ).text();
+      // ReadLine() returns $null at EOF; the loop must not spin after the parent exits.
+      expect(src).toMatch(/\$null -eq \$line -or \$line -eq 'QUIT'/);
+    });
     return;
   }
 

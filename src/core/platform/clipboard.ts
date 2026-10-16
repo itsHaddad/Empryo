@@ -327,7 +327,8 @@ class WindowsClipboardDaemon {
         "[Console]::Out.Flush()",
         "while ($true) {",
         "  $line = [Console]::In.ReadLine()",
-        "  if ($line -eq 'QUIT') { break }",
+        // ReadLine() returns $null at EOF; without this the loop spins after the parent exits.
+        "  if ($null -eq $line -or $line -eq 'QUIT') { break }",
         "  if ($line -eq 'READ') {",
         "    $img = [System.Windows.Forms.Clipboard]::GetImage()",
         "    if ($img) {",
